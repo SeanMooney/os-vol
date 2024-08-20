@@ -14,7 +14,7 @@ class Memory(api.Backend):
     Memory is a fake storage backend that stores volumes in memory.
     """
 
-    volumes: ty.Dict[uuid.UUID, io.StringIO] = dataclasses.field(
+    volumes: ty.Dict[uuid.UUID, ty.IO] = dataclasses.field(
         default_factory=dict)
 
     def create_volume(self, size: int,  name: str) -> 'api.volume.Volume':
@@ -53,3 +53,9 @@ class Memory(api.Backend):
 
     def open_volume(self, volume) -> ty.IO:
         return self.volumes[volume.volume_id]
+
+    def host_attach(self, volume):
+        raise NotImplementedError
+
+    def host_detach(self, volume):
+        raise NotImplementedError

@@ -25,6 +25,7 @@ class Volume:
     volume_type: str = dataclasses.field(default='base')
     pool_ref: ty.Any = dataclasses.field(default=None)
     backend: ty.Any = dataclasses.field(default=None)
+    device_path: ty.Optional[str] = None
 
     def __str__(self):
         return self.volume_summary()
@@ -42,6 +43,7 @@ class Volume:
             'size': self.size,
             'volume_type': self.volume_type,
             'path': self.path,
+            'device_path': self.device_path,
         })
 
     def delete(self) -> None:
