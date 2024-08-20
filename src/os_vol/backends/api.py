@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import abc
-import io
+import typing as ty
 
 from os_vol.objects import types
 from os_vol.objects import volume
@@ -30,5 +30,5 @@ class Backend(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def open_volume(self, volume: volume.Volume) -> io.TextIOWrapper:
+    def open_volume(self, volume: volume.Volume) -> ty.IO:
         pass

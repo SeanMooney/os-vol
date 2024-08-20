@@ -51,5 +51,5 @@ class Memory(api.Backend):
             copy.deepcopy(self.volumes[volume.volume_id]))
         return new_vol
 
-    def open_volume(self, volume) -> io.TextIOWrapper:
+    def open_volume(self, volume) -> ty.IO:
         return self.volumes[volume.volume_id]
