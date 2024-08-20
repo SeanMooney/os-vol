@@ -3,6 +3,7 @@ import dataclasses
 import os
 import shelve
 import shutil
+import subprocess  # nosec B404
 import typing as ty
 import uuid
 
@@ -33,7 +34,7 @@ class FlatFile(api.Backend):
         return self.capasity - self.used_space
 
     def create_volume(
-            self, size: types.SIZE_MB, name: str) -> 'api.volume.Volume':
+            self, size: types.SIZE_BYTES, name: str) -> 'api.volume.Volume':
         vol_id = uuid.uuid5(self.FLAT_FILE_DOMAIN, name)
         vol_path = f'{self.path}/vol-{vol_id}'
         with open(vol_path, 'w+b') as f:
@@ -64,3 +65,28 @@ class FlatFile(api.Backend):
 
     def open_volume(self, volume) -> ty.IO:
         return open(volume.path, 'r+b')
+
+    def host_attach(self, volume) -> str:
+        """Attach a volume as a block device to the host.
+
+        The flat file backend uses a loopback device to attach the backing file
+        to the host.
+        """
+
+        out = subprocess.run(
+            ['sudo', 'losetup', '-fP', '--show', volume.path],
+            check=True, capture_output=True, text=True, timeout=5)  # nosec
+        device = out.stdout.strip()
+        volume.device_path = device
+        self.volumes[str(volume.volume_id)] = volume.volume_summary()
+        return device
+
+    def host_detach(self, volume) -> None:
+        """Detach a volume from the host.
+
+        The flat file backend uses a loopback device
+        """
+        subprocess.run(
+            ['sudo', 'losetup', '-d', volume.device_path], check=True)  # nosec
+        volume.device_path = None
+        self.volumes[str(volume.volume_id)] = volume.volume_summary()

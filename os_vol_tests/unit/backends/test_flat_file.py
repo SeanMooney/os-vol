@@ -54,3 +54,10 @@ class TestFlatFileBackend(base_test.OSVTestCase):
             f.write(b'test')
         with open(vol.path, 'rb') as f:
             self.assertEqual(f.read(4), b'test')
+
+    def test_host_attach_detach(self):
+        vol = self.backend.create_volume(1024, 'test')
+        device = self.backend.host_attach(vol)
+        print(device)
+        self.addCleanup(self.backend.host_detach, vol)
+        self.assertTrue(os.path.exists(device))
