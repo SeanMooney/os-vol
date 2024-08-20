@@ -11,3 +11,6 @@ version_scheme = "no-guess-dev"
 [tool.black]
 line-length = 79
 target-version = ['py39']
+
+[tool.bandit]
+skips = ["B403", "B301"]

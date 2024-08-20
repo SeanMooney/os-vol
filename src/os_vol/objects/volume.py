@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import dataclasses
+import json
 import os
 import typing as ty
 import uuid
@@ -35,8 +36,13 @@ class Volume:
         """
         Return a summary of the volume.
         """
-        return (f'Volume {self.name} ({self.volume_id}) of size {self.size} '
-                f'in pool {self.pool_ref}')
+        return json.dumps({
+            'name': self.name,
+            'volume_id': str(self.volume_id),
+            'size': self.size,
+            'volume_type': self.volume_type,
+            'path': self.path,
+        })
 
     def delete(self) -> None:
         """
