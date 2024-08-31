@@ -23,7 +23,7 @@ class FlatFile(api.Backend):
         self.path = path
         self.volumes = shelve.open(f'{self.path}/{self.SHELVE_FILE}')
         total, _, _ = shutil.disk_usage(self.path)
-        self.capasity: types.SIZE_MB = total
+        self.capacity: types.SIZE_MB = total
 
     @property
     def used_space(self) -> types.SIZE_MB:
@@ -31,7 +31,7 @@ class FlatFile(api.Backend):
 
     @property
     def free_space(self) -> types.SIZE_MB:
-        return self.capasity - self.used_space
+        return self.capacity - self.used_space
 
     def create_volume(
             self, size: types.SIZE_BYTES, name: str) -> 'api.volume.Volume':
