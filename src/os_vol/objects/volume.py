@@ -2,14 +2,26 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import dataclasses
-import json
-import os
 import typing as ty
 import uuid
 
 from os_vol.objects import types
 
 SIZE_MB = types.SIZE_MB
+
+
+@dataclasses.dataclass
+class VolumeSummary:
+    """
+    VolumeSummary is an abstract dataclass that represents a volume summary.
+    """
+
+    name: str | None
+    volume_id: uuid.UUID
+    size: SIZE_MB
+    volume_type: str
+    path: str | None
+    device_path: str | None
 
 
 @dataclasses.dataclass
@@ -33,18 +45,18 @@ class Volume:
     def __repr__(self):
         return self.name
 
-    def volume_summary(self) -> str:
+    def volume_summary(self) -> VolumeSummary:
         """
         Return a summary of the volume.
         """
-        return json.dumps({
-            'name': self.name,
-            'volume_id': str(self.volume_id),
-            'size': self.size,
-            'volume_type': self.volume_type,
-            'path': self.path,
-            'device_path': self.device_path,
-        })
+        return VolumeSummary(
+            name=self.name,
+            volume_id=self.volume_id,
+            size=self.size,
+            volume_type=self.volume_type,
+            path=self.path,
+            device_path=self.device_path
+        )
 
     def delete(self) -> None:
         """
@@ -65,7 +77,7 @@ class Volume:
         """
         return self.pool_ref.clone_volume(self, name)
 
-    def open(self) -> os.PathLike:
+    def open(self) -> ty.IO:
         """
         Open the volume.
         returns: file object
